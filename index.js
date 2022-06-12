@@ -101,16 +101,23 @@ app.post("/event", isLoggedIn, async (req, res) => {
     const event = new Event({ name, owner: req.user, invitees: invitedUsers });
     await event.save();
     for (const user of invitedUsers) {
-        user.invitedTo.push(event);
+        await user.invitedTo.push(event);
         await user.save();
     }
     res.send(event);
 });
 
 app.get("/event", isLoggedIn, async (req, res) => {
+    const user_id = req.user._id;
     const list1 = await Event.find({ owner: user_id });
     const list2 = await req.user.populate("invitedTo");
     res.send({ owner: list1, invitedTo: list2.invitedTo });
+});
+
+app.post("/eventdetails", async (req, res) => {
+    const { name } = req.body;
+    const list = await Event.find({ name: name }).populate("invitees");
+    res.send(list);
 });
 
 app.get("/", (req, res) => {
