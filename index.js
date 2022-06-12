@@ -6,7 +6,6 @@ const path = require("path");
 const session = require("express-session");
 const LocalStrategy = require("passport-local");
 let dburl = "mongodb://localhost:27017/AppDB";
-const ejsMate = require("ejs-mate");
 const sessionCfg = {
     secret: "secret",
     resave: false,
@@ -31,9 +30,6 @@ const User = require("./models/user");
 const Event = require("./models/event");
 app.use(passport.initialize());
 app.use(passport.session());
-app.engine("ejs", ejsMate);
-app.set("view engine", "ejs");
-app.set("views", path.join(__dirname, "/views"));
 app.use(express.static(path.join(__dirname, "public")));
 passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
